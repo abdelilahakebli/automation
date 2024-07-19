@@ -1,0 +1,20 @@
+---
+- name: Set crictl version
+  set_fact:
+    crictl_version: "v1.28.0"
+
+- name: Download crictl
+  ansible.builtin.get_url:
+    url: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+    dest: "/tmp/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+
+- name: Extract crictl
+  ansible.builtin.unarchive:
+    src: "/tmp/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+    dest: "/usr/local/bin"
+    remote_src: yes
+
+- name: Remove downloaded tarball
+  ansible.builtin.file:
+    path: "/tmp/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+    state: absent

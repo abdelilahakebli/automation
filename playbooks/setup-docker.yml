@@ -1,0 +1,15 @@
+---
+- name: Updating & Upgrading Packages.
+  hosts: vm
+  become: true
+  become_user: root
+  become_method: ansible.builtin.sudo
+  tasks:
+    - name: Get Docker Script
+      ansible.builtin.get_url:
+        url: https://get.docker.com
+        dest: ./get-docker.sh
+        mode: "0755"
+
+    - name: Install Docker
+      ansible.builtin.command: ./get-docker.sh && rm -rf ./get-docker.sh%

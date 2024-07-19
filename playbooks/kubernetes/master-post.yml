@@ -1,0 +1,15 @@
+---
+- name: Adding KUBECONFIG var env.
+  ansible.builtin.command: sh -c "echo 'export KUBECONFIG=/etc/kubernetes/admin.conf'>> /root/.bashrc "
+  become: true
+  become_user: root
+
+- name: Applying pod network config (Calico)
+  block:
+    - name: copy config
+      ansible.builtin.copy:
+        src: calico.yaml
+        dest: /root/calico.yaml
+    # - name: Apply config
+    #   ansible.builtin.command: sudo su -c "kubectl apply -f /root/calico.yaml"
+    #   become: true

@@ -1,0 +1,30 @@
+---
+- name: Setting UP K8s.
+  hosts: vm
+  become: true
+  become_user: root
+  become_method: ansible.builtin.sudo
+  vars:
+    pod_cidr: "10.10.0.0/16" # Change this to your desired CIDR
+    kubernetes_version: "1.29"
+  tasks:
+    - name: "Disabling SWAP"
+      ansible.builtin.include_tasks:
+        file: kubernetes/disable-swap.yml
+
+    - name: "Installing CRIO"
+      ansible.builtin.include_tasks:
+        file: kubernetes/crio.yml
+
+    - name: "Installing CRICTL"
+      ansible.builtin.include_tasks:
+        file: kubernetes/crictl.yml
+
+    - name: "Setting Kubernetes version and node type"
+      ansible.builtin.set_fact:
+        kubernetes_version: "{{ kubernetes_version }}"
+        pod_cidr: "{{ pod_cidr }}"
+
+    - name: "Setting kubernetes node (master/worker)"
+      ansible.builtin.include_tasks:
+        file: kubernetes/install_k8s.yml

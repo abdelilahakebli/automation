@@ -1,0 +1,23 @@
+---
+- name: Updating & Upgrading Packages.
+  hosts: vm
+  become: true
+  become_user: root
+  become_method: ansible.builtin.sudo
+
+  tasks:
+    - name: Update and upgrade packages on Debian-based systems.
+      apt:
+        update_cache: yes
+        upgrade: yes
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install common packages.
+      apt:
+        name:
+          - software-properties-common
+          - curl
+          - apt-transport-https
+          - ca-certificates
+          - net-tools
+        update_cache: yes

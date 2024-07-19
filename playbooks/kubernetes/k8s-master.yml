@@ -1,0 +1,30 @@
+---
+- name: Initialize Kubernetes with kubeadm
+  hosts: vm
+  become: yes
+  vars:
+    pod_cidr: "10.10.0.0/16" # Change this to your desired CIDR
+
+  tasks:
+    - name: Get external IP address
+      set_fact:
+        ipaddr: "{{ inventory_hostname }}"
+
+    - name: Get node name
+      ansible.builtin.command: "hostname -s"
+      register: nodename
+
+    - name: Initialize Kubernetes cluster with kubeadm
+      ansible.builtin.command:
+        cmd: >
+          kubeadm init
+          --apiserver-advertise-address={{ ipaddr }}
+          --apiserver-cert-extra-sans={{ ipaddr }}
+          --pod-network-cidr={{ pod_cidr }}
+          --node-name={{ nodename.stdout }}
+          --ignore-preflight-errors=Swap
+      register: kubeadm_init
+
+    - name: Display kubeadm init output
+      debug:
+        var: kubeadm_init.stdout_lines

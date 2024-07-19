@@ -1,0 +1,21 @@
+---
+- name: "Disabling SWAP"
+  ansible.builtin.include_tasks:
+    file: ./disable-swap.yml
+
+- name: "Installing CRIO"
+  ansible.builtin.include_tasks:
+    file: ./crio.yml
+
+- name: "Installing CRICTL"
+  ansible.builtin.include_tasks:
+    file: ./crictl.yml
+
+- name: "Setting Kubernetes version and node type"
+  ansible.builtin.set_fact:
+    kubernetes_version: "{{ kubernetes_version }}"
+    pod_cidr: "{{ pod_cidr }}"
+
+- name: "Setting kubernetes node (master/worker)"
+  ansible.builtin.include_tasks:
+    file: ./install_k8s.yml
